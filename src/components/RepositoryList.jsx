@@ -4,6 +4,7 @@ import RepositoryItem from './RepositoryItem';
 const styles = StyleSheet.create({
   separator: {
     height: 10,
+    backgroundColor: '#ddd',
   },
 });
 
@@ -54,7 +55,7 @@ const repositories = [
   },
 ];
 
-const ItemSeparator = () => <View style={styles.separator} />;
+export const ItemSeparator = () => <View style={styles.separator} />;
 
 const _renderItem = ({ item }) => {
   return <RepositoryItem item={item} />;

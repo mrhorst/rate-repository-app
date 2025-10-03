@@ -13,7 +13,6 @@ const Main = () => {
   return (
     <View style={styles.container}>
       <AppBar />
-      <Text>Rate Repo App</Text>
       <Text>
         <RepositoryList />
       </Text>
