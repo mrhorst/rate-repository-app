@@ -4,6 +4,7 @@ import theme from '../theme';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import useSignIn from '../hooks/useSignIn';
+import AuthStorage from '../utils/authStorage';
 
 const inputValidationSchema = yup.object().shape({
   username: yup
@@ -92,7 +93,6 @@ const SignIn = () => {
   const onSubmit = async (values) => {
     try {
       const { data } = await signIn(values);
-      console.log(data);
     } catch (e) {
       console.log(e);
     }
