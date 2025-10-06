@@ -18,13 +18,9 @@ const _renderItem = ({ item }) => {
 const RepositoryList = () => {
   const { repositories } = useRepositories();
 
-  const repositoryNodes = repositories
-    ? repositories.edges.map((edge) => edge.node)
-    : [];
-
   return (
     <FlatList
-      data={repositoryNodes}
+      data={repositories}
       ItemSeparatorComponent={ItemSeparator}
       renderItem={_renderItem}
       keyExtractor={(item) => item.id}
