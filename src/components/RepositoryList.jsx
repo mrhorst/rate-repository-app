@@ -15,17 +15,24 @@ const _renderItem = ({ item }) => {
   return <RepositoryItem item={item} />;
 };
 
-const RepositoryList = () => {
-  const { repositories } = useRepositories();
-
+export const RepositoryListContainer = ({ repositories }) => {
+  const repositoryNodes = repositories
+    ? repositories.edges.map((edge) => edge.node)
+    : [];
   return (
     <FlatList
-      data={repositories}
+      data={repositoryNodes}
       ItemSeparatorComponent={ItemSeparator}
       renderItem={_renderItem}
       keyExtractor={(item) => item.id}
     />
   );
+};
+
+const RepositoryList = () => {
+  const { repositories } = useRepositories();
+
+  return <RepositoryListContainer repositories={repositories} />;
 };
 
 export default RepositoryList;
