@@ -53,7 +53,10 @@ describe('RepositoryList', () => {
       render(<RepositoryListContainer repositories={repositories} />);
       const repositoryItems = screen.getAllByTestId('repositoryItem');
       const [firstRepositoryItem, secondRepositoryItem] = repositoryItems;
-      expect(firstRepositoryItem).toHaveTextContent(/jaredpalmer/i);
+      expect(firstRepositoryItem).toHaveTextContent(/jaredpalmer\/formik/i);
+      expect(firstRepositoryItem).not.toHaveTextContent(
+        /async-library\/react-async/i
+      );
     });
   });
 });
