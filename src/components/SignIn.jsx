@@ -4,7 +4,7 @@ import theme from '../theme';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import useSignIn from '../hooks/useSignIn';
-import AuthStorage from '../utils/authStorage';
+import { useNavigate } from 'react-router-native';
 
 const inputValidationSchema = yup.object().shape({
   username: yup
@@ -89,10 +89,12 @@ const SignInForm = ({ onSubmit }) => {
 
 const SignIn = () => {
   const [signIn] = useSignIn();
+  const navigate = useNavigate();
 
   const onSubmit = async (values) => {
     try {
-      const { data } = await signIn(values);
+      await signIn(values);
+      navigate('/');
     } catch (e) {
       console.log(e);
     }
