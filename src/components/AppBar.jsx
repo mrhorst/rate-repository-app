@@ -1,7 +1,10 @@
-import { Text, View, StyleSheet, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { Link } from 'react-router-native';
 import Constants from 'expo-constants';
 import theme from '../theme';
+import { useQuery } from '@apollo/client/react';
+import { ME } from '../graphql/queries';
+import useSignOut from '../hooks/useSignOut';
 
 const styles = StyleSheet.create({
   container: {
@@ -26,22 +29,35 @@ const styles = StyleSheet.create({
 });
 
 const AppBar = () => {
+  const { data } = useQuery(ME);
+  const signOut = useSignOut();
+
   return (
     <View style={styles.container}>
       <ScrollView horizontal>
         <AppBarTab path={'/'}>Repositories</AppBarTab>
-        <AppBarTab path={'/sign-in'}>Sign In</AppBarTab>
+        {data?.me === null ? (
+          <AppBarTab path={'/sign-in'}>Sign In</AppBarTab>
+        ) : (
+          <AppBarTab onPress={signOut}>Sign Out</AppBarTab>
+        )}
       </ScrollView>
     </View>
   );
 };
 
-const AppBarTab = ({ children, path }) => {
-  return (
+const AppBarTab = ({ onPress, children, path }) => {
+  return path ? (
     <View style={styles.tabContainer}>
       <Link to={path} style={styles.linkHitArea}>
         <Text style={styles.appBarText}>{children}</Text>
       </Link>
+    </View>
+  ) : (
+    <View style={styles.tabContainer}>
+      <Pressable onPress={onPress} style={styles.linkHitArea}>
+        <Text style={styles.appBarText}>{children}</Text>
+      </Pressable>
     </View>
   );
 };
