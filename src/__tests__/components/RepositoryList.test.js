@@ -1,9 +1,12 @@
-import { within } from '@testing-library/dom';
-import RepositoryList, {
-  RepositoryListContainer,
-} from '../../components/RepositoryList';
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { RepositoryListContainer } from '../../components/RepositoryList';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react-native';
 import formatNumber from '../../utils/formatNumber';
+import { SignInForm } from '../../components/SignIn';
 
 describe('RepositoryList', () => {
   describe('RepositoryListContainer', () => {
@@ -54,31 +57,47 @@ describe('RepositoryList', () => {
       render(<RepositoryListContainer repositories={repositories} />);
       const repositoryItems = screen.getAllByTestId('repositoryItem');
       const [firstRepositoryItem, secondRepositoryItem] = repositoryItems;
-      // grab first node object
+
+      // grab node object
       const firstNode = repositories.edges[0].node;
       const secondNode = repositories.edges[1].node;
+
       // add all values into an array but remove last one (avatar url)
       const firstNodeValuesArray = Object.values(firstNode).slice(0, -1);
       const secondNodeValuesArray = Object.values(secondNode).slice(0, -1);
+
       // test all values using REGEX to see if firstRepositoryItem has textContent for 'value'
       firstNodeValuesArray.forEach((value) => {
-        if (typeof value === 'number') {
-          expect(firstRepositoryItem).toHaveTextContent(
-            RegExp(formatNumber(value), 'i')
-          );
-        } else {
-          expect(firstRepositoryItem).toHaveTextContent(RegExp(value, 'i'));
-        }
+        expect(firstRepositoryItem).toHaveTextContent(
+          RegExp(formatNumber(value), 'i')
+        );
       });
 
       secondNodeValuesArray.forEach((value) => {
-        if (typeof value === 'number') {
-          expect(secondRepositoryItem).toHaveTextContent(
-            RegExp(formatNumber(value), 'i')
-          );
-        } else {
-          expect(secondRepositoryItem).toHaveTextContent(RegExp(value, 'i'));
-        }
+        expect(secondRepositoryItem).toHaveTextContent(
+          RegExp(formatNumber(value), 'i')
+        );
+      });
+    });
+  });
+});
+
+describe('SignIn', () => {
+  describe('SignInContainer', () => {
+    it('calls onSubmit function with correct arguments when a valid form is submitted', async () => {
+      const onSubmit = jest.fn();
+      render(<SignInForm onSubmit={onSubmit} />);
+
+      fireEvent.changeText(screen.getByPlaceholderText('username'), 'matti');
+      fireEvent.changeText(screen.getByPlaceholderText('password'), 'password');
+      fireEvent.press(screen.getByText('Sign in'));
+
+      await waitFor(() => {
+        expect(onSubmit).toHaveBeenCalledTimes(1);
+        expect(onSubmit.mock.calls[0][0]).toEqual({
+          username: 'matti',
+          password: 'password',
+        });
       });
     });
   });
