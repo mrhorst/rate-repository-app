@@ -1,6 +1,7 @@
 import Text from './Text';
 import { Image, StyleSheet, View } from 'react-native';
 import theme from '../theme';
+import formatNumber from '../utils/formatNumber';
 
 const styles = StyleSheet.create({
   avatar: {
@@ -57,13 +58,6 @@ const RepositoryItem = ({ item }) => {
       </View>
     </View>
   );
-};
-
-const formatNumber = (number) => {
-  return new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: 1,
-    notation: 'compact',
-  }).format(number);
 };
 
 const RepoStat = ({ stat, label }) => {

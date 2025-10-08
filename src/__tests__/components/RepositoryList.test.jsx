@@ -3,6 +3,7 @@ import RepositoryList, {
   RepositoryListContainer,
 } from '../../components/RepositoryList';
 import { fireEvent, render, screen } from '@testing-library/react-native';
+import formatNumber from '../../utils/formatNumber';
 
 describe('RepositoryList', () => {
   describe('RepositoryListContainer', () => {
@@ -53,10 +54,32 @@ describe('RepositoryList', () => {
       render(<RepositoryListContainer repositories={repositories} />);
       const repositoryItems = screen.getAllByTestId('repositoryItem');
       const [firstRepositoryItem, secondRepositoryItem] = repositoryItems;
-      expect(firstRepositoryItem).toHaveTextContent(/jaredpalmer\/formik/i);
-      expect(firstRepositoryItem).not.toHaveTextContent(
-        /async-library\/react-async/i
-      );
+      // grab first node object
+      const firstNode = repositories.edges[0].node;
+      const secondNode = repositories.edges[1].node;
+      // add all values into an array but remove last one (avatar url)
+      const firstNodeValuesArray = Object.values(firstNode).slice(0, -1);
+      const secondNodeValuesArray = Object.values(secondNode).slice(0, -1);
+      // test all values using REGEX to see if firstRepositoryItem has textContent for 'value'
+      firstNodeValuesArray.forEach((value) => {
+        if (typeof value === 'number') {
+          expect(firstRepositoryItem).toHaveTextContent(
+            RegExp(formatNumber(value), 'i')
+          );
+        } else {
+          expect(firstRepositoryItem).toHaveTextContent(RegExp(value, 'i'));
+        }
+      });
+
+      secondNodeValuesArray.forEach((value) => {
+        if (typeof value === 'number') {
+          expect(secondRepositoryItem).toHaveTextContent(
+            RegExp(formatNumber(value), 'i')
+          );
+        } else {
+          expect(secondRepositoryItem).toHaveTextContent(RegExp(value, 'i'));
+        }
+      });
     });
   });
 });
