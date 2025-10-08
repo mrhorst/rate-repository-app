@@ -3,6 +3,7 @@ import { Image, Pressable, StyleSheet, View } from 'react-native';
 import theme from '../theme';
 import formatNumber from '../utils/formatNumber';
 import { useNavigate } from 'react-router-native';
+import * as Linking from 'expo-linking';
 
 const styles = StyleSheet.create({
   avatar: {
@@ -70,8 +71,12 @@ const RepositoryItem = ({ item, isDetailView = false }) => {
           <RepoStat label='Reviews' stat={item.reviewCount} />
           <RepoStat label='Rating' stat={item.ratingAverage} />
         </View>
+
         {isDetailView && (
-          <Pressable style={styles.button} onPress={''}>
+          <Pressable
+            style={styles.button}
+            onPress={() => navigate(Linking.openURL(item.url))}
+          >
             <Text style={styles.buttonText}>Open in Github</Text>
           </Pressable>
         )}
