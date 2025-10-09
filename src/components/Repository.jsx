@@ -6,6 +6,7 @@ import Text from './Text';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { ItemSeparator } from './RepositoryList';
 import theme from '../theme';
+import { format } from 'date-fns';
 
 const styles = StyleSheet.create({
   reviewContainer: {
@@ -31,7 +32,9 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 8,
   },
-  reviewHeaderContainer: {},
+  reviewHeaderContainer: {
+    gap: 4,
+  },
   reviewUsernameText: {
     fontWeight: theme.fontWeights.bold,
   },
@@ -64,7 +67,9 @@ const ReviewItem = ({ review }) => {
       <View style={styles.reviewInfoContainer}>
         <View style={styles.reviewHeaderContainer}>
           <Text style={styles.reviewUsernameText}>{review.user.username}</Text>
-          <Text style={styles.reviewDateText}>{review.createdAt}</Text>
+          <Text style={styles.reviewDateText}>
+            {format(review.createdAt, 'MM.dd.yyyy')}
+          </Text>
         </View>
         <View style={styles.reviewDescriptionContainer}>
           <Text style={styles.reviewDescriptionText}>{review.text}</Text>
@@ -83,6 +88,7 @@ const SingleRepository = () => {
 
   const reviewsQuery = useQuery(REVIEWS, {
     variables: { repositoryId: id },
+    fetchPolicy: 'cache-and-network',
   });
 
   const reviews = reviewsQuery.data
@@ -91,7 +97,7 @@ const SingleRepository = () => {
 
   return (
     <FlatList
-      data={reviews}
+      data={reviews.reverse()}
       renderItem={({ item }) => <ReviewItem review={item} />}
       keyExtractor={({ id }) => id}
       ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
