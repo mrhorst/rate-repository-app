@@ -38,7 +38,10 @@ const AppBar = () => {
       <ScrollView horizontal>
         <AppBarTab path={'/'}>Repositories</AppBarTab>
         {data?.me === null ? (
-          <AppBarTab path={'/sign-in'}>Sign In</AppBarTab>
+          <View style={{ flexDirection: 'row' }}>
+            <AppBarTab path={'/sign-in'}>Sign In</AppBarTab>
+            <AppBarTab path={'/sign-up'}>Sign Up</AppBarTab>
+          </View>
         ) : (
           <View style={{ flexDirection: 'row' }}>
             <AppBarTab onPress={() => navigate('/review')}>Review</AppBarTab>
