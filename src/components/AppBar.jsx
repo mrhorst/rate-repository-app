@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet, ScrollView, Pressable } from 'react-native';
-import { Link } from 'react-router-native';
+import { Link, useNavigate } from 'react-router-native';
 import Constants from 'expo-constants';
 import theme from '../theme';
 import { useQuery } from '@apollo/client/react';
@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
 const AppBar = () => {
   const { data } = useQuery(ME);
   const signOut = useSignOut();
+  const navigate = useNavigate();
 
   return (
     <View style={styles.container}>
@@ -39,7 +40,10 @@ const AppBar = () => {
         {data?.me === null ? (
           <AppBarTab path={'/sign-in'}>Sign In</AppBarTab>
         ) : (
-          <AppBarTab onPress={signOut}>Sign Out</AppBarTab>
+          <View style={{ flexDirection: 'row' }}>
+            <AppBarTab onPress={() => navigate('/review')}>Review</AppBarTab>
+            <AppBarTab onPress={signOut}>Sign Out</AppBarTab>
+          </View>
         )}
       </ScrollView>
     </View>
