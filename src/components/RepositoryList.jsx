@@ -2,7 +2,14 @@ import { FlatList, View, StyleSheet, Pressable } from 'react-native';
 import RepositoryItem from './RepositoryItem';
 import useRepositories from '../hooks/useRepositories';
 import { useState } from 'react';
-import { Button, IconButton, Menu, PaperProvider } from 'react-native-paper';
+import {
+  Button,
+  IconButton,
+  Menu,
+  PaperProvider,
+  Searchbar,
+} from 'react-native-paper';
+import { useDebounce } from 'use-debounce';
 
 const styles = StyleSheet.create({
   separator: {
@@ -28,7 +35,6 @@ export const RepositoryListContainer = ({ repositories }) => {
       ItemSeparatorComponent={ItemSeparator}
       renderItem={_renderItem}
       keyExtractor={(item) => item.id}
-      // ListHeaderComponent={}
     />
   );
 };
@@ -37,10 +43,16 @@ const RepositoryList = () => {
   const [orderDirection, setOrderDirection] = useState('DESC');
   const [orderBy, setOrderBy] = useState('CREATED_AT');
   const [lastSelection, setLastSelection] = useState('Latest repositories');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch] = useDebounce(searchQuery, 500);
 
   const [visible, setVisible] = useState(false);
 
-  const { repositories } = useRepositories(orderDirection, orderBy);
+  const { repositories } = useRepositories(
+    orderDirection,
+    orderBy,
+    debouncedSearch.trim()
+  );
 
   const closeMenu = () => setVisible(false);
   const openMenu = () => setVisible(true);
@@ -72,12 +84,24 @@ const RepositoryList = () => {
         <View
           style={{
             backgroundColor: '#ddd',
-            padding: 0,
-            height: 80,
-            alignItems: 'flex-start',
-            justifyContent: 'center',
+            padding: 10,
+            alignItems: 'center',
+            gap: 10,
           }}
         >
+          <Searchbar
+            placeholder='search'
+            style={{
+              borderRadius: 8,
+              width: '100%',
+              marginHorizontal: 15,
+              backgroundColor: 'white',
+              borderWidth: 1,
+              borderColor: '#bbb',
+            }}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
           <Menu
             visible={visible}
             onDismiss={closeMenu}
@@ -86,13 +110,18 @@ const RepositoryList = () => {
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-between',
-                  padding: 20,
+                  padding: 0,
                   alignItems: 'center',
                   width: '100%',
+                  borderWidth: 1,
+                  borderColor: '#bbb',
+                  borderRadius: 8,
                 }}
                 onPress={openMenu}
               >
-                <Button textColor='#000'>{lastSelection}</Button>
+                <Button textColor='#000' onPress={openMenu}>
+                  {lastSelection}
+                </Button>
                 <IconButton icon='sort-variant' />
               </Pressable>
             }
