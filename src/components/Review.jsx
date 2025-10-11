@@ -69,7 +69,7 @@ const ReviewForm = ({ onSubmit }) => {
           formik.errors.username ? inputStyles.inputError : {},
         ]}
         placeholder='Rating'
-        value={Number(formik.values.rating)}
+        value={formik.values.rating}
         onChangeText={formik.handleChange('rating')}
         onBlur={formik.handleBlur('rating')}
         keyboardType='numeric'
@@ -116,7 +116,8 @@ const Review = () => {
 };
 
 export const MyReviews = () => {
-  const { data, loading, error } = useQuery(ME, {
+  const { data, loading, error, refetch } = useQuery(ME, {
+    fetchPolicy: 'cache-and-network',
     variables: {
       includeReviews: true,
     },
@@ -125,12 +126,20 @@ export const MyReviews = () => {
   if (loading) return <Text>Loading</Text>;
   if (error) return <Text>Error</Text>;
 
-  const reviews = data ? data.me?.reviews.edges.map((edge) => edge.node) : [];
+  const reviews = data
+    ? data.me?.reviews.edges.map((edge) => edge.node).reverse()
+    : [];
+
+  if (reviews.length === 0) {
+    return <Text>You have left 0 reviews!</Text>;
+  }
 
   return (
     <FlatList
-      data={reviews?.reverse()}
-      renderItem={({ item }) => <ReviewItem review={item} myReviews={true} />}
+      data={reviews}
+      renderItem={({ item }) => (
+        <ReviewItem refetch={refetch} review={item} myReviews={true} />
+      )}
       keyExtractor={({ id }) => id}
       ItemSeparatorComponent={ItemSeparator}
     />

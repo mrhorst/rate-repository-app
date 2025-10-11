@@ -1,13 +1,14 @@
 import { useNavigate, useParams } from 'react-router-native';
-import { useQuery } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { REPOSITORY, REVIEWS } from '../graphql/queries';
 import RepositoryItem from './RepositoryItem';
 import Text from './Text';
-import { Button, FlatList, StyleSheet, View } from 'react-native';
+import { Alert, Button, FlatList, StyleSheet, View } from 'react-native';
 import { ItemSeparator } from './RepositoryList';
 import theme from '../theme';
 import { format } from 'date-fns';
 import * as Linking from 'expo-linking';
+import { DELETE_REVIEW } from '../graphql/mutations';
 
 const styles = StyleSheet.create({
   reviewContainer: {
@@ -59,8 +60,31 @@ const RepositoryInfo = ({ repository }) => {
   );
 };
 
-export const ReviewItem = ({ review, myReviews = false }) => {
+export const ReviewItem = ({ refetch, review, myReviews = false }) => {
   const navigate = useNavigate();
+  const [mutate] = useMutation(DELETE_REVIEW);
+
+  const handleDelete = () => {
+    Alert.alert(
+      'Delete review',
+      'Are you sure you want to delete this review?',
+      [
+        {
+          text: 'Cancel',
+          onPress: null,
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          onPress: async () => {
+            await mutate({ variables: { deleteReviewId: review.id } });
+            refetch();
+          },
+          style: 'destructive',
+        },
+      ]
+    );
+  };
   return (
     <View>
       <View style={styles.reviewContainer}>
@@ -112,7 +136,11 @@ export const ReviewItem = ({ review, myReviews = false }) => {
               flex: 1,
             }}
           >
-            <Button color='white' title='Delete review'></Button>
+            <Button
+              onPress={handleDelete}
+              color='white'
+              title='Delete review'
+            ></Button>
           </View>
         </View>
       ) : null}
@@ -133,12 +161,14 @@ const SingleRepository = () => {
   });
 
   const reviews = reviewsQuery.data
-    ? reviewsQuery.data.repository.reviews.edges.map((edge) => edge.node)
+    ? reviewsQuery.data.repository.reviews.edges
+        .map((edge) => edge.node)
+        .reverse()
     : [];
 
   return (
     <FlatList
-      data={reviews.reverse()}
+      data={reviews}
       renderItem={({ item }) => <ReviewItem review={item} />}
       keyExtractor={({ id }) => id}
       ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
