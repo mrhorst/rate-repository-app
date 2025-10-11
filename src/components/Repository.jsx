@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-native';
+import { useNavigate, useParams } from 'react-router-native';
 import { useQuery } from '@apollo/client/react';
 import { REPOSITORY, REVIEWS } from '../graphql/queries';
 import RepositoryItem from './RepositoryItem';
@@ -7,6 +7,7 @@ import { Button, FlatList, StyleSheet, View } from 'react-native';
 import { ItemSeparator } from './RepositoryList';
 import theme from '../theme';
 import { format } from 'date-fns';
+import * as Linking from 'expo-linking';
 
 const styles = StyleSheet.create({
   reviewContainer: {
@@ -59,6 +60,7 @@ const RepositoryInfo = ({ repository }) => {
 };
 
 export const ReviewItem = ({ review, myReviews = false }) => {
+  const navigate = useNavigate();
   return (
     <View>
       <View style={styles.reviewContainer}>
@@ -96,7 +98,11 @@ export const ReviewItem = ({ review, myReviews = false }) => {
               flex: 1,
             }}
           >
-            <Button color='white' title='View repository'></Button>
+            <Button
+              onPress={() => navigate(Linking.openURL(review.repository.url))}
+              color='white'
+              title='View repository'
+            ></Button>
           </View>
           <View
             style={{
