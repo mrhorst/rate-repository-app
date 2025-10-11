@@ -1,8 +1,8 @@
-import { FlatList, View, StyleSheet } from 'react-native';
+import { FlatList, View, StyleSheet, Pressable } from 'react-native';
 import RepositoryItem from './RepositoryItem';
 import useRepositories from '../hooks/useRepositories';
 import { useState } from 'react';
-import { Button, Menu, PaperProvider } from 'react-native-paper';
+import { Button, IconButton, Menu, PaperProvider } from 'react-native-paper';
 
 const styles = StyleSheet.create({
   separator: {
@@ -82,14 +82,19 @@ const RepositoryList = () => {
             visible={visible}
             onDismiss={closeMenu}
             anchor={
-              <Button
-                textColor='#000'
-                buttonColor='#ccc'
-                style={{ marginLeft: 15 }}
+              <Pressable
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  padding: 20,
+                  alignItems: 'center',
+                  width: '100%',
+                }}
                 onPress={openMenu}
               >
-                {lastSelection}
-              </Button>
+                <Button textColor='#000'>{lastSelection}</Button>
+                <IconButton icon='sort-variant' />
+              </Pressable>
             }
           >
             <Menu.Item
