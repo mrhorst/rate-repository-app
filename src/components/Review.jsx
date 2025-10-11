@@ -1,10 +1,14 @@
 import { useFormik } from 'formik';
-import { Pressable, TextInput, View } from 'react-native';
+import { FlatList, Pressable, TextInput, View } from 'react-native';
 import * as Yup from 'yup';
 import { inputStyles } from '../styles/styles';
 import Text from './Text';
 import useReview from '../hooks/useReview';
 import { useNavigate } from 'react-router-native';
+import { ReviewItem } from './Repository';
+import { useQuery } from '@apollo/client/react';
+import { ME } from '../graphql/queries';
+import { ItemSeparator } from './RepositoryList';
 
 const reviewFormValidationSchema = Yup.object().shape({
   ownerName: Yup.string()
@@ -109,6 +113,28 @@ const Review = () => {
   };
 
   return <ReviewForm onSubmit={onSubmit} />;
+};
+
+export const MyReviews = () => {
+  const { data, loading, error } = useQuery(ME, {
+    variables: {
+      includeReviews: true,
+    },
+  });
+
+  if (loading) return <Text>Loading</Text>;
+  if (error) return <Text>Error</Text>;
+
+  const reviews = data ? data.me?.reviews.edges.map((edge) => edge.node) : [];
+
+  return (
+    <FlatList
+      data={reviews?.reverse()}
+      renderItem={({ item }) => <ReviewItem review={item} />}
+      keyExtractor={({ id }) => id}
+      ItemSeparatorComponent={ItemSeparator}
+    />
+  );
 };
 
 export default Review;

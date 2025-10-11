@@ -44,7 +44,12 @@ const AppBar = () => {
           </View>
         ) : (
           <View style={{ flexDirection: 'row' }}>
-            <AppBarTab onPress={() => navigate('/review')}>Review</AppBarTab>
+            <AppBarTab onPress={() => navigate('/review')}>
+              Create a review
+            </AppBarTab>
+            <AppBarTab onPress={() => navigate('/my-reviews')}>
+              My reviews
+            </AppBarTab>
             <AppBarTab onPress={signOut}>Sign Out</AppBarTab>
           </View>
         )}
