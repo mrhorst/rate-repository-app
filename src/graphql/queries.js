@@ -38,6 +38,9 @@ export const ME = gql`
           node {
             id
             text
+            repository {
+              fullName
+            }
             rating
             createdAt
             user {

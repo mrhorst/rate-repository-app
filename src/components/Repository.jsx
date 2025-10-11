@@ -58,7 +58,7 @@ const RepositoryInfo = ({ repository }) => {
   );
 };
 
-export const ReviewItem = ({ review }) => {
+export const ReviewItem = ({ review, myReviews = false }) => {
   return (
     <View style={styles.reviewContainer}>
       <View style={styles.ratingContainer}>
@@ -66,7 +66,9 @@ export const ReviewItem = ({ review }) => {
       </View>
       <View style={styles.reviewInfoContainer}>
         <View style={styles.reviewHeaderContainer}>
-          <Text style={styles.reviewUsernameText}>{review.user.username}</Text>
+          <Text style={styles.reviewUsernameText}>
+            {myReviews ? review.repository.fullName : review.user.username}
+          </Text>
           <Text style={styles.reviewDateText}>
             {format(review.createdAt, 'MM.dd.yyyy')}
           </Text>

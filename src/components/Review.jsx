@@ -1,5 +1,5 @@
 import { useFormik } from 'formik';
-import { FlatList, Pressable, TextInput, View } from 'react-native';
+import { Button, FlatList, Pressable, TextInput, View } from 'react-native';
 import * as Yup from 'yup';
 import { inputStyles } from '../styles/styles';
 import Text from './Text';
@@ -128,12 +128,15 @@ export const MyReviews = () => {
   const reviews = data ? data.me?.reviews.edges.map((edge) => edge.node) : [];
 
   return (
-    <FlatList
-      data={reviews?.reverse()}
-      renderItem={({ item }) => <ReviewItem review={item} />}
-      keyExtractor={({ id }) => id}
-      ItemSeparatorComponent={ItemSeparator}
-    />
+    <View>
+      <FlatList
+        data={reviews?.reverse()}
+        renderItem={({ item }) => <ReviewItem review={item} myReviews={true} />}
+        keyExtractor={({ id }) => id}
+        ItemSeparatorComponent={ItemSeparator}
+      />
+      <Button title='Hello'></Button>
+    </View>
   );
 };
 
