@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client/react';
 import { REPOSITORY, REVIEWS } from '../graphql/queries';
 import RepositoryItem from './RepositoryItem';
 import Text from './Text';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { Button, FlatList, StyleSheet, View } from 'react-native';
 import { ItemSeparator } from './RepositoryList';
 import theme from '../theme';
 import { format } from 'date-fns';
@@ -60,23 +60,56 @@ const RepositoryInfo = ({ repository }) => {
 
 export const ReviewItem = ({ review, myReviews = false }) => {
   return (
-    <View style={styles.reviewContainer}>
-      <View style={styles.ratingContainer}>
-        <Text style={styles.ratingText}>{review.rating}</Text>
-      </View>
-      <View style={styles.reviewInfoContainer}>
-        <View style={styles.reviewHeaderContainer}>
-          <Text style={styles.reviewUsernameText}>
-            {myReviews ? review.repository.fullName : review.user.username}
-          </Text>
-          <Text style={styles.reviewDateText}>
-            {format(review.createdAt, 'MM.dd.yyyy')}
-          </Text>
+    <View>
+      <View style={styles.reviewContainer}>
+        <View style={styles.ratingContainer}>
+          <Text style={styles.ratingText}>{review.rating}</Text>
         </View>
-        <View style={styles.reviewDescriptionContainer}>
-          <Text style={styles.reviewDescriptionText}>{review.text}</Text>
+        <View style={styles.reviewInfoContainer}>
+          <View style={styles.reviewHeaderContainer}>
+            <Text style={styles.reviewUsernameText}>
+              {myReviews ? review.repository.fullName : review.user.username}
+            </Text>
+            <Text style={styles.reviewDateText}>
+              {format(review.createdAt, 'MM.dd.yyyy')}
+            </Text>
+          </View>
+          <View style={styles.reviewDescriptionContainer}>
+            <Text style={styles.reviewDescriptionText}>{review.text}</Text>
+          </View>
         </View>
       </View>
+      {myReviews ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            padding: 10,
+            gap: 50,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: theme.colors.primary,
+              borderRadius: 3,
+              padding: 5,
+              flex: 1,
+            }}
+          >
+            <Button color='white' title='View repository'></Button>
+          </View>
+          <View
+            style={{
+              backgroundColor: '#d33',
+              borderRadius: 3,
+              padding: 5,
+              flex: 1,
+            }}
+          >
+            <Button color='white' title='Delete review'></Button>
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 };

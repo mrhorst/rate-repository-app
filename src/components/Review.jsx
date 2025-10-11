@@ -128,15 +128,12 @@ export const MyReviews = () => {
   const reviews = data ? data.me?.reviews.edges.map((edge) => edge.node) : [];
 
   return (
-    <View>
-      <FlatList
-        data={reviews?.reverse()}
-        renderItem={({ item }) => <ReviewItem review={item} myReviews={true} />}
-        keyExtractor={({ id }) => id}
-        ItemSeparatorComponent={ItemSeparator}
-      />
-      <Button title='Hello'></Button>
-    </View>
+    <FlatList
+      data={reviews?.reverse()}
+      renderItem={({ item }) => <ReviewItem review={item} myReviews={true} />}
+      keyExtractor={({ id }) => id}
+      ItemSeparatorComponent={ItemSeparator}
+    />
   );
 };
 
