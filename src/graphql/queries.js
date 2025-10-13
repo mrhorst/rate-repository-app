@@ -5,12 +5,17 @@ export const GET_REPOSITORIES = gql`
     $searchKeyword: String
     $orderDirection: OrderDirection
     $orderBy: AllRepositoriesOrderBy
+    $after: String
+    $first: Int
   ) {
     repositories(
+      first: $first
       orderDirection: $orderDirection
       orderBy: $orderBy
       searchKeyword: $searchKeyword
+      after: $after
     ) {
+      totalCount
       edges {
         node {
           id
@@ -23,6 +28,12 @@ export const GET_REPOSITORIES = gql`
           reviewCount
           stargazersCount
         }
+        cursor
+      }
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
       }
     }
   }

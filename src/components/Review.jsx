@@ -1,5 +1,5 @@
 import { useFormik } from 'formik';
-import { Button, FlatList, Pressable, TextInput, View } from 'react-native';
+import { FlatList, Pressable, TextInput, View } from 'react-native';
 import * as Yup from 'yup';
 import { inputStyles } from '../styles/styles';
 import Text from './Text';

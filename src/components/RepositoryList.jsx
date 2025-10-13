@@ -24,7 +24,7 @@ const _renderItem = ({ item }) => {
   return <RepositoryItem item={item} />;
 };
 
-export const RepositoryListContainer = ({ repositories }) => {
+export const RepositoryListContainer = ({ repositories, onEndReach }) => {
   const repositoryNodes = repositories
     ? repositories.edges.map((edge) => edge.node)
     : [];
@@ -35,6 +35,8 @@ export const RepositoryListContainer = ({ repositories }) => {
       ItemSeparatorComponent={ItemSeparator}
       renderItem={_renderItem}
       keyExtractor={(item) => item.id}
+      onEndReached={onEndReach}
+      onEndReachedThreshold={0.5}
     />
   );
 };
@@ -48,11 +50,16 @@ const RepositoryList = () => {
 
   const [visible, setVisible] = useState(false);
 
-  const { repositories } = useRepositories(
+  const { repositories, fetchMore } = useRepositories({
     orderDirection,
     orderBy,
-    debouncedSearch.trim()
-  );
+    searchKeyword: debouncedSearch.trim(),
+    first: 5,
+  });
+
+  const onEndReach = () => {
+    fetchMore();
+  };
 
   const closeMenu = () => setVisible(false);
   const openMenu = () => setVisible(true);
@@ -141,7 +148,10 @@ const RepositoryList = () => {
           </Menu>
         </View>
 
-        <RepositoryListContainer repositories={repositories} />
+        <RepositoryListContainer
+          repositories={repositories}
+          onEndReach={onEndReach}
+        />
       </View>
     </PaperProvider>
   );
