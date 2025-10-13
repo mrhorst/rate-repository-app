@@ -67,7 +67,7 @@ export const ME = gql`
 `;
 
 export const REPOSITORY = gql`
-  query ($repositoryId: ID!) {
+  query ($repositoryId: ID!, $after: String, $first: Int) {
     repository(id: $repositoryId) {
       id
       fullName
@@ -81,16 +81,8 @@ export const REPOSITORY = gql`
       ratingAverage
       ownerAvatarUrl
       watchersCount
-    }
-  }
-`;
-
-export const REVIEWS = gql`
-  query ($repositoryId: ID!) {
-    repository(id: $repositoryId) {
-      id
-      fullName
-      reviews {
+      reviews(after: $after, first: $first) {
+        totalCount
         edges {
           node {
             id
@@ -102,6 +94,42 @@ export const REVIEWS = gql`
               username
             }
           }
+          cursor
+        }
+        pageInfo {
+          endCursor
+          startCursor
+          hasNextPage
+        }
+      }
+    }
+  }
+`;
+
+export const REVIEWS = gql`
+  query ($repositoryId: ID!, $after: String, $first: Int) {
+    repository(id: $repositoryId) {
+      id
+      fullName
+      reviews(after: $after, first: $first) {
+        totalCount
+        edges {
+          node {
+            id
+            text
+            rating
+            createdAt
+            user {
+              id
+              username
+            }
+          }
+          cursor
+        }
+        pageInfo {
+          endCursor
+          startCursor
+          hasNextPage
         }
       }
     }

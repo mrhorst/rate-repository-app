@@ -3,7 +3,7 @@ import { GET_REPOSITORIES } from '../graphql/queries';
 
 const useRepositories = (variables) => {
   const { data, loading, fetchMore, ...result } = useQuery(GET_REPOSITORIES, {
-    fetchPolicy: 'cache-in-network',
+    fetchPolicy: 'cache-and-network',
     variables,
   });
 

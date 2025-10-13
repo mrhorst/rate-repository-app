@@ -47,14 +47,14 @@ const styles = StyleSheet.create({
   reviewDescriptionText: {},
 });
 
-const RepositoryInfo = ({ repository }) => {
-  if (repository?.loading) return <Text>Loading...</Text>;
-  if (repository?.error) return <Text>Error!</Text>;
-  if (!repository?.data?.repository) return <Text>Repo not found</Text>;
+const RepositoryInfo = ({ data, loading, error }) => {
+  if (loading) return <Text>Loading...</Text>;
+  if (error) return <Text>Error!</Text>;
+  if (!data?.repository) return <Text>Repo not found</Text>;
 
   return (
     <View>
-      <RepositoryItem item={repository.data.repository} isDetailView={true} />
+      <RepositoryItem item={data.repository} isDetailView={true} />
       <ItemSeparator />
     </View>
   );
@@ -151,19 +151,31 @@ export const ReviewItem = ({ refetch, review, myReviews = false }) => {
 const SingleRepository = () => {
   const { id } = useParams();
 
-  const repository = useQuery(REPOSITORY, {
-    variables: { repositoryId: id },
-  });
+  const variables = { repositoryId: id, first: 4 };
 
-  const reviewsQuery = useQuery(REVIEWS, {
-    variables: { repositoryId: id },
+  const { data, loading, error, fetchMore, ...result } = useQuery(REPOSITORY, {
+    variables,
     fetchPolicy: 'cache-and-network',
   });
 
-  const reviews = reviewsQuery.data
-    ? reviewsQuery.data.repository.reviews.edges
-        .map((edge) => edge.node)
-        .reverse()
+  const handleFetchMore = () => {
+    const canFetchMore =
+      !loading && data?.repository.reviews.pageInfo.hasNextPage;
+
+    if (!canFetchMore) {
+      return;
+    }
+
+    fetchMore({
+      variables: {
+        after: data.repository.reviews.pageInfo.endCursor,
+        ...variables,
+      },
+    });
+  };
+
+  const reviews = data
+    ? data.repository.reviews?.edges.map((edge) => edge.node)
     : [];
 
   return (
@@ -171,8 +183,12 @@ const SingleRepository = () => {
       data={reviews}
       renderItem={({ item }) => <ReviewItem review={item} />}
       keyExtractor={({ id }) => id}
-      ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
+      ListHeaderComponent={
+        <RepositoryInfo data={data} loading={loading} error={error} />
+      }
       ItemSeparatorComponent={ItemSeparator}
+      onEndReached={handleFetchMore}
+      onEndReachedThreshold={0.5}
     />
   );
 };
