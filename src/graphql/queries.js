@@ -105,33 +105,3 @@ export const REPOSITORY = gql`
     }
   }
 `;
-
-export const REVIEWS = gql`
-  query ($repositoryId: ID!, $after: String, $first: Int) {
-    repository(id: $repositoryId) {
-      id
-      fullName
-      reviews(after: $after, first: $first) {
-        totalCount
-        edges {
-          node {
-            id
-            text
-            rating
-            createdAt
-            user {
-              id
-              username
-            }
-          }
-          cursor
-        }
-        pageInfo {
-          endCursor
-          startCursor
-          hasNextPage
-        }
-      }
-    }
-  }
-`;
